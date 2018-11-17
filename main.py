@@ -34,10 +34,10 @@ for trainIndex, testIndex in kf:
     for i in range(testSet.shape[0]):
         if predictedLabels[i] == testLabels[i]:
             correct += 1
-        
-    print 'Accuracy: ' + str(float(correct)/(testLabels.size))
+
+    print('Accuracy: ' + str(float(correct) / (testLabels.size)))
     totalCorrect += correct
     totalInstances += testLabels.size
-print 'Total Accuracy: ' + str(totalCorrect/float(totalInstances))
+print('Total Accuracy: ' + str(totalCorrect / float(totalInstances)))
 	
 
