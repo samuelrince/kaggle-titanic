@@ -24,10 +24,12 @@ X_test = testData
 X_test = X_test[1:]
 
 y = X[:, 1].astype(int)  # Save labels to y
-y_test = X_test[:, 1].astype(int)
+X_test = np.array(X_test)
+#y_test = X_test[:, 1].astype(int)
+
 
 X = delete(X, 1, 1)  # Remove survival column from matrix X
-X_test = delete(X_test, 1, 1)
+#X_test = delete(X_test, 1, 1)
 
 ages = []
 ages_test = []
@@ -85,7 +87,22 @@ for z in Z:
     if z[3] == '': z[3] = mean_age
 
 
+#We add the mean age where the data is missing
+age = []
 for x_test in X_test:
+    if x_test[9] != '':
+        age.append(x_test[9])
+        
+mean_age = round(mean(ages), 0)
+
+for x_test in X_test:
+    if x_test[9] == '' : x_test[9] = mean_age
+        
+    
+    
+    
+for x_test in X_test:
+    
     #   Pclass, Name, Sex, Age, SibSp, Parch, Fare
     z_test = [float(x_test[1]), x_test[3], x_test[4], x_test[5], float(x_test[6]), float(x_test[7]), float(x_test[9])]
 
@@ -157,14 +174,12 @@ newData_test = dot(C_test, real(eigvec_test[:,:dim]))
 # LDA
 W, projected_centroid, X_lda = logistic_regression_classifier(newData, y)
 predictedLabels_LDA = predict(newData_test, projected_centroid, W)
+print('prediction : ', predictedLabels_LDA)
 
-# Compute accuracy LDA
-counter = 0
-for i in range(predictedLabels_LDA.size):
-    if predictedLabels_LDA[i] == y_test[i]:
-        counter += 1
-print('Accuracy of LDA: %f' % (counter / float(predictedLabels_LDA.size) * 100.0))
 
+
+
+''' Méthode simpliste de classification'''
 
 # Initialize cross validation
 kf = cross_validation.KFold(X.shape[0], n_folds=10)
