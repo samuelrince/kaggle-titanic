@@ -199,7 +199,7 @@ for trainIndex, testIndex in kf:
 
     nbtraindata = trainSet.shape[0]
     k = int(sqrt(nbtraindata))
-    predictedLabels = kNNgroup(k, trainSet, trainLabels, testSet)
+    predictedLabels = kNNgroup(3, trainSet, trainLabels, testSet)
 
     correct = 0
     for i in range(testSet.shape[0]):
