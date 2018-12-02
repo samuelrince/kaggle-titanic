@@ -4,7 +4,7 @@ import csv as csv
 from classify import classify
 from logistic_regression_classifier import *
 
-# Load data
+############################ Load data ###################################"
 csv_file_object = csv.reader(open('Data/train.csv', 'rt'))  # Load in the csv file
 csv_file_object_test = csv.reader(open('Data/test.csv', 'rt'))  # Load in the csv file
 # header = csv_file_object.next()  # Skip the fist line as it is a header
@@ -24,7 +24,7 @@ X_test = testData
 X_test = X_test[1:]
 
 y = X[:, 1].astype(int)  # Save labels to y
-X_test = np.array(X_test)
+X_test = array(X_test)
 #y_test = X_test[:, 1].astype(int)
 
 
@@ -35,7 +35,8 @@ ages = []
 ages_test = []
 Z = []
 Z_test = []
-# Data preprocessing
+
+################################ Data preprocessing ##########################################"
 for x in X:
     #   Pclass, Name, Sex, Age, SibSp, Parch, Fare
     z = [float(x[1]), x[3], x[4], x[5], float(x[6]), float(x[7]), float(x[9])]
@@ -152,7 +153,7 @@ mean_age_test = round(mean(ages_test), 0)
 for z_test in Z_test:
     if z_test[3] == '': z_test[3] = mean_age_test
 
-# Dimensionality reduction
+####################################### Dimensionality reduction ###################################
 dim = 4
 M = mean(Z, 0)
 M_test = mean(Z_test, 0)
