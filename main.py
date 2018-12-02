@@ -62,16 +62,22 @@ else :
     
 def catAge(age):
     if age < 4: #bébé
-        return(0)
+        return(0.0)
     elif age < 12 : #enfant
-        return(1)
+        return(1.0)
     elif age < 20 : #adolescent
-        return()
+        return(2.0)
+    elif age < 50 : #adulte
+        return(3.0)
+    else:    #old
+        return(4.0)
+
+ageslice = False
 
 ################################ Data preprocessing ##########################################"
 for x in X:
 #    print(x)
-    #   Pclass,        Name, Sex, Age,     SibSp,       Parch,       Fare
+    #         Pclass,        Name, Sex, Age,     SibSp,       Parch,       Fare
     zinter = [float(x[1]), x[3], x[4], x[5], float(x[6]), float(x[7]), float(x[9])]
 
     z=[0]*(len(featuresSelection))       #Selection of wanted features
@@ -79,12 +85,19 @@ for x in X:
         z[i] = zinter[featuresSelection[i]]
     
     # Mean of age
-    if indAge!=-1 and z[indAge] != '':
+    if indAge!=-1 and z[indAge] != '' and not ageslice:
         ages.append(float(z[indAge]))
         z[indAge] = float(z[indAge])
 
+    # categorization of age
+    if indAge != -1 and ageslice:
+        if z[indAge] == '':
+            z[indAge] = 3.0
+        else :
+            z[indAge] = catAge(float(z[indAge]))
+
 #    # Adapting sex feature
-    if indSex !=-1 :
+    if indSex !=-1 and not ageslice:
         if z[indSex] == 'male':
             z[indSex] = 0    # Replace 'male' by 0
         else:
@@ -118,25 +131,30 @@ for x in X:
         elif 'Mme.' in z[indName]: z[indName] = 15
         elif 'Don.' in z[indName]: z[indName] = 16
         else: z[indName] = 17
-#
+
     Z.append(z)
 
+
 mean_age = round(mean(ages), 0)
 
-if indAge !=-1:
+if indAge !=-1 and not ageslice:
     for z in Z:
-        if z[indAge] == '': z[indAge] = mean_age
+        if z[indAge] == '': 
+            z[indAge] = float(mean_age);
+            
+        
 
 #We add the mean age where the data is missing
-age = []
-for x_test in X_test:
-    if x_test[9] != '':
-        age.append(x_test[9])
-        
-mean_age = round(mean(ages), 0)
-
-for x_test in X_test:
-    if x_test[9] == '' : x_test[9] = mean_age
+if not ageslice:
+    age = []
+    for x_test in X_test:
+        if x_test[9] != '':
+            age.append(x_test[9])
+            
+    mean_age = round(mean(ages), 0)
+    
+    for x_test in X_test:
+        if x_test[9] == '' : x_test[9] = mean_age
         
     
 for x_test in X_test:
@@ -149,9 +167,15 @@ for x_test in X_test:
     for i in range(len(featuresSelection)):  #Selection of wanted features
         z_test[i] = zinter[featuresSelection[i]]
     
-    
+        # categorization of age
+    if indAge != -1 and ageslice:
+        if z_test[indAge] == '':
+            z_test[indAge] = 3.0
+        else :
+            z_test[indAge] = catAge(float(z_test[indAge]))
+            
     # Mean of age
-    if indAge!=-1 and z_test[indAge] != '':
+    if indAge!=-1 and z_test[indAge] != '' and not ageslice:
         ages_test.append(float(z_test[indAge]))
         z_test[indAge] = float(z_test[indAge])
 
@@ -190,12 +214,13 @@ for x_test in X_test:
         elif 'Mme.' in z_test[indName]: z_test[indName] = 15
         elif 'Don.' in z_test[indName]: z_test[indName] = 16
         else: z_test[indName] = 17
-#
+
+    
     Z_test.append(z_test)
 #
 mean_age_test = round(mean(ages_test), 0)
 
-if indAge != -1 :
+if indAge != -1 and not ageslice:
     for z_test in Z_test:
         if z_test[indAge] == '': z_test[indAge] = mean_age_test
 
