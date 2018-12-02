@@ -3,6 +3,7 @@ from sklearn import cross_validation
 import csv as csv
 from classify import classify
 from logistic_regression_classifier import *
+from kNN import *
 
 ############################ Load data ###################################"
 csv_file_object = csv.reader(open('Data/train.csv', 'rt'))  # Load in the csv file
@@ -154,6 +155,8 @@ for z_test in Z_test:
     if z_test[3] == '': z_test[3] = mean_age_test
 
 ####################################### Dimensionality reduction ###################################
+
+# perform PCA on both 
 dim = 4
 M = mean(Z, 0)
 M_test = mean(Z_test, 0)
@@ -178,10 +181,39 @@ predictedLabels_LDA = predict(newData_test, projected_centroid, W)
 print('prediction : ', predictedLabels_LDA)
 
 
+############### kNN ###################
 
+# Initialize cross validation
+print ("Essais de kNN :")
+
+kf = cross_validation.KFold(newData.shape[0], n_folds=10)
+
+totalInstances = 0  # Variable that will store the total intances that will be tested
+totalCorrect = 0  # Variable that will store the correctly predicted intances
+
+for trainIndex, testIndex in kf:
+    trainSet = newData[trainIndex]
+    testSet = newData[testIndex]
+    trainLabels = y[trainIndex]
+    testLabels = y[testIndex]
+
+    nbtraindata = trainSet.shape[0]
+    k = int(sqrt(nbtraindata))
+    predictedLabels = kNNgroup(80, trainSet, trainLabels, testSet)
+
+    correct = 0
+    for i in range(testSet.shape[0]):
+        if predictedLabels[i] == testLabels[i]:
+            correct += 1
+
+    print('Accuracy: ' + str(float(correct) / testLabels.size))
+    totalCorrect += correct
+    totalInstances += testLabels.size
+print('Total Accuracy: ' + str(totalCorrect / float(totalInstances)))
 
 ''' Méthode simpliste de classification'''
 
+print("classification seulement avec le sexe :")
 # Initialize cross validation
 kf = cross_validation.KFold(X.shape[0], n_folds=10)
 
