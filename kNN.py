@@ -37,11 +37,15 @@ def kNN(k,traindata,trainlabel,testdata): # return the label (0 or 1) of the tes
     # Sort distances and re-arrange labels based on the distance of the instances
     idx = distances.argsort()
     trainlabel = trainlabel[idx];
+#    
+
     
     countlabels = zeros(2);
-    
+#    print("index :", idx)
+#    print("trainlabels :", trainlabel)
     for i in range(k):
-        countlabels[trainlabel[i]];
+#        print(distances[idx[i]])
+        countlabels[trainlabel[i]]+=1;
     
     if countlabels[0]>countlabels[1]:
         return(0)

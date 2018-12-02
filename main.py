@@ -40,14 +40,14 @@ Z_test = []
 ################################ Data preprocessing ##########################################"
 for x in X:
     #   Pclass, Name, Sex, Age, SibSp, Parch, Fare
-    z = [float(x[1]), x[3], x[4], x[5], float(x[6]), float(x[7]), float(x[9])]
-
+#    z = [float(x[1]), x[3], x[4], x[5], float(x[6]), float(x[7]), float(x[9])]
+    z = [float(x[1]),x[3], x[4], x[5], float(x[7])]
     # Mean of age
     if z[3] != '':
         ages.append(float(z[3]))
         z[3] = float(z[3])
 
-    # Adapting sex feature
+#    # Adapting sex feature
     if z[2] == 'male':
         z[2] = 0    # Replace 'male' by 0
     else:
@@ -80,14 +80,13 @@ for x in X:
     elif 'Mme.' in z[1]: z[1] = 15
     elif 'Don.' in z[1]: z[1] = 16
     else: z[1] = 17
-
+#
     Z.append(z)
 
 mean_age = round(mean(ages), 0)
 
 for z in Z:
     if z[3] == '': z[3] = mean_age
-
 
 #We add the mean age where the data is missing
 age = []
@@ -106,8 +105,8 @@ for x_test in X_test:
 for x_test in X_test:
     
     #   Pclass, Name, Sex, Age, SibSp, Parch, Fare
-    z_test = [float(x_test[1]), x_test[3], x_test[4], x_test[5], float(x_test[6]), float(x_test[7]), float(x_test[9])]
-
+#    z_test = [float(x_test[1]), x_test[3], x_test[4], x_test[5], float(x_test[6]), float(x_test[7]), float(x_test[9])]
+    z_test = [float(x_test[1]), x_test[3], x_test[4], x_test[5], float(x_test[7])]
     # Mean of age
     if z_test[3] != '':
         ages_test.append(float(z_test[3]))
@@ -118,15 +117,15 @@ for x_test in X_test:
         z_test[2] = 0    # Replace 'male' by 0
     else:
         z_test[2] = 1    # Replace 'female' by 1
-
+#
     '''
-        # * Adapting title-status
-        # * Mr = 0
-        # * Mrs = 1
-        # * Miss = 2
-        # * Mlle = 3
-        # * Master = 4
-        # * Dr = 5
+         * Adapting title-status
+         * Mr = 0
+         * Mrs = 1
+         * Miss = 2
+         * Mlle = 3
+         * Master = 4
+         * Dr = 5
     '''
     if 'Mr.' in z_test[1]: z_test[1] = 0
     elif 'Mrs.' in z_test[1]: z_test[1] = 1
@@ -146,9 +145,9 @@ for x_test in X_test:
     elif 'Mme.' in z_test[1]: z_test[1] = 15
     elif 'Don.' in z_test[1]: z_test[1] = 16
     else: z_test[1] = 17
-
+#
     Z_test.append(z_test)
-
+#
 mean_age_test = round(mean(ages_test), 0)
 
 for z_test in Z_test:
@@ -191,6 +190,7 @@ kf = cross_validation.KFold(newData.shape[0], n_folds=10)
 totalInstances = 0  # Variable that will store the total intances that will be tested
 totalCorrect = 0  # Variable that will store the correctly predicted intances
 
+#print(kNN(newData.shape[0],newData,y,newData_test[4,:]))
 for trainIndex, testIndex in kf:
     trainSet = newData[trainIndex]
     testSet = newData[testIndex]
@@ -199,7 +199,7 @@ for trainIndex, testIndex in kf:
 
     nbtraindata = trainSet.shape[0]
     k = int(sqrt(nbtraindata))
-    predictedLabels = kNNgroup(80, trainSet, trainLabels, testSet)
+    predictedLabels = kNNgroup(k, trainSet, trainLabels, testSet)
 
     correct = 0
     for i in range(testSet.shape[0]):
