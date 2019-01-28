@@ -3,6 +3,8 @@ from sklearn import cross_validation
 import csv as csv
 from classify import classify
 from logistic_regression_classifier import *
+from SVM import *
+from sklearn.svm import SVC
 from kNN import *
 
 ############################ Load data ###################################"
@@ -158,7 +160,6 @@ if not ageslice:
         
     
 for x_test in X_test:
-    
     #   Pclass, Name, Sex, Age, SibSp, Parch, Fare
 #    z_test = [float(x_test[1]), x_test[3], x_test[4], x_test[5], float(x_test[6]), float(x_test[7]), float(x_test[9])]
     zinter_test = [float(x_test[1]), x_test[3], x_test[4], x_test[5], float(x_test[7])]
@@ -244,35 +245,71 @@ eigvec_test = eigvec_test[:,idx_test]
 newData = dot(C, real(eigvec[:,:dim]))
 newData_test = dot(C_test, real(eigvec_test[:,:dim]))
 
+#==============
+#     SVM
+#==============
+kf_SVM = cross_validation.KFold(X.shape[0], n_folds=10)
+
+totalInstances = 0  # Variable that will store the total intances that will be tested
+totalCorrect = 0  # Variable that will store the correctly predicted intances
+
+
+for trainIndex, testIndex in kf_SVM:
+    trainSet = newData[trainIndex]
+    testSet = newData[testIndex]
+    trainLabels = y[trainIndex]
+    testLabels = y[testIndex]
+
+    # we create an instance of SVM and fit out data. We do not scale our
+    # data since we want to plot the support vectors
+    C = 100  # SVM regularization parameter
+    sigma = 0.1
+
+    svc = SVC(C=C, kernel="precomputed")
+    svc.fit(gaussianKernel(trainSet, trainSet, sigma),trainLabels)
+
+    # Compute accuracy on the training set
+    p = svc.predict(gaussianKernel(trainSet, trainSet, sigma))
+    counter = 0
+    for i in range(trainLabels.size):
+        if p[i] == trainLabels[i]:
+            counter += 1
+    print('Train Accuracy: %f' % (counter / float(trainLabels.size) * 100.0))
+
+
+
+
 
 # LDA
 # W, projected_centroid, X_lda = logistic_regression_classifier(newData, y)
 # predictedLabels_LDA = predict(newData_test, projected_centroid, W)
 # print('prediction : ', predictedLabels_LDA)
 
-kf_LDA = cross_validation.KFold(X.shape[0], n_folds=10)
-totalInstances = 0  # Variable that will store the total intances that will be tested
-totalCorrect = 0  # Variable that will store the correctly predicted intances
+# kf_LDA = cross_validation.KFold(X.shape[0], n_folds=10)
+# totalInstances = 0  # Variable that will store the total intances that will be tested
+# totalCorrect = 0  # Variable that will store the correctly predicted intances
 
 
-for trainIndex, testIndex in kf_LDA:
-    trainSet = newData[trainIndex]
-    testSet = newData[testIndex]
-    trainLabels = y[trainIndex]
-    testLabels = y[testIndex]
 
-    W, projected_centroid, X_lda = logistic_regression_classifier(trainSet, trainLabels)
-    predictedLabels_LDA = predict(testSet, projected_centroid, W)
 
-    correct = 0
-    for i in range(testSet.shape[0]):
-        if predictedLabels_LDA[i] == testLabels[i]:
-            correct += 1
-
-    print('Accuracy: ' + str(float(correct) / testLabels.size))
-    totalCorrect += correct
-    totalInstances += testLabels.size
-print('Total Accuracy: ' + str(totalCorrect / float(totalInstances)))
+# for trainIndex, testIndex in kf_LDA:
+#     trainSet = newData[trainIndex]
+#     testSet = newData[testIndex]
+#     trainLabels = y[trainIndex]
+#     testLabels = y[testIndex]
+#
+#     W, projected_centroid, X_lda = logistic_regression_classifier(trainSet, trainLabels)
+#     predictedLabels_LDA = predict(testSet, projected_centroid, W)
+#
+#     correct = 0
+#     for i in range(testSet.shape[0]):
+#         if predictedLabels_LDA[i] == testLabels[i]:
+#             correct += 1
+#
+#     print('Accuracy: ' + str(float(correct) / testLabels.size))
+#     totalCorrect += correct
+#     totalInstances += testLabels.size
+# print('Total Accuracy: ' + str(totalCorrect / float(totalInstances)))
 
 
 # Initialize cross validation
