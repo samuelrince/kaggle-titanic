@@ -246,15 +246,38 @@ newData_test = dot(C_test, real(eigvec_test[:,:dim]))
 
 
 # LDA
-W, projected_centroid, X_lda = logistic_regression_classifier(newData, y)
-predictedLabels_LDA = predict(newData_test, projected_centroid, W)
-print('prediction : ', predictedLabels_LDA)
+# W, projected_centroid, X_lda = logistic_regression_classifier(newData, y)
+# predictedLabels_LDA = predict(newData_test, projected_centroid, W)
+# print('prediction : ', predictedLabels_LDA)
+
+kf_LDA = cross_validation.KFold(X.shape[0], n_folds=10)
+totalInstances = 0  # Variable that will store the total intances that will be tested
+totalCorrect = 0  # Variable that will store the correctly predicted intances
 
 
-############### kNN ###################
+for trainIndex, testIndex in kf_LDA:
+    trainSet = newData[trainIndex]
+    testSet = newData[testIndex]
+    trainLabels = y[trainIndex]
+    testLabels = y[testIndex]
+
+    W, projected_centroid, X_lda = logistic_regression_classifier(trainSet, trainLabels)
+    predictedLabels_LDA = predict(testSet, projected_centroid, W)
+
+    correct = 0
+    for i in range(testSet.shape[0]):
+        if predictedLabels_LDA[i] == testLabels[i]:
+            correct += 1
+
+    print('Accuracy: ' + str(float(correct) / testLabels.size))
+    totalCorrect += correct
+    totalInstances += testLabels.size
+print('Total Accuracy: ' + str(totalCorrect / float(totalInstances)))
+
 
 # Initialize cross validation
 print ("Essais de kNN :")
+
 
 kf = cross_validation.KFold(newData.shape[0], n_folds=10)
 
@@ -304,7 +327,7 @@ for trainIndex, testIndex in kf:
         if predictedLabels[i] == testLabels[i]:
             correct += 1
 
-    print('Accuracy: ' + str(float(correct) / testLabels.size))
+    # print('Accuracy: ' + str(float(correct) / testLabels.size))
     totalCorrect += correct
     totalInstances += testLabels.size
-print('Total Accuracy: ' + str(totalCorrect / float(totalInstances)))
+# print('Total Accuracy: ' + str(totalCorrect / float(totalInstances)))
